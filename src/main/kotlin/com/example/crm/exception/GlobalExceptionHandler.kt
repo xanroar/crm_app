@@ -21,4 +21,10 @@ class GlobalExceptionHandler {
     fun handleIllegalArgumentException(e: IllegalArgumentException): ResponseEntity<String> {
         return ResponseEntity("Bad Request: ${e.message}", HttpStatus.BAD_REQUEST)
     }
+
+    @ExceptionHandler(value = [RuntimeException::class])
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun handleRuntimeException(e: RuntimeException): ResponseEntity<String> {
+        return ResponseEntity("Internal Server Error: ${e.message}", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
 }

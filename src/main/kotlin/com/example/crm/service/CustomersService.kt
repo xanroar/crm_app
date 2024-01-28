@@ -4,11 +4,20 @@ import com.example.crm.data.entity.Customer
 import com.example.crm.data.repositories.CustomersRepository
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
 class CustomersService(private val customersRepository: CustomersRepository) {
 
+    fun getAllCustomers(page: Int, size: Int): List<Customer> {
+        val pageable: Pageable = PageRequest.of(page, size, Sort.by("id"))
+
+        val customersPage = customersRepository.findAll(pageable)
+        return customersPage.content
+    }
     fun saveCustomer(customer: Customer): Customer {
         return customersRepository.save(customer)
     }

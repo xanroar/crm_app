@@ -8,31 +8,16 @@ import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "appuser")
-class User(
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    var role: Role? = null,
-
-    @NotBlank
-    @Column(nullable = false)
-    var username: String? = null,
-
-    @NotBlank
-    @Column(nullable = false)
-    var fullName: String? = null,
-
-    @Column(nullable = false, length = 64)
-    var password: String? = null,
-
-    var enabled: Boolean = true
-) {
+@Table(name = "user_table")
+class User {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    val id: Long? = null
+    val role: Role? = null
+    val username: String? = null
+    val fullName: String? = null
+    val password: String? = null
+    val enabled: Boolean = true
 
-    @CreationTimestamp
-    @Column(updatable = false)
-    val dateCreated: LocalDateTime? = null
 }

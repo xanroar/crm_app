@@ -6,18 +6,10 @@ import com.example.crm.enums.Role
 
 class UserDTO {
     var id: Long = 0
-
-    @NotNull
     var role: Role? = null
-
-    @NotBlank
     var username: String? = null
-
-    @NotBlank
     var fullName: String? = null
-
     var password: String? = null
-
     var enabled: Boolean? = false
 }
 
