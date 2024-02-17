@@ -3,7 +3,7 @@ package com.example.crm
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication()
+@SpringBootApplication
 class CrmAppApplication
 
 fun main(args: Array<String>) {
