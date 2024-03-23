@@ -1,10 +1,14 @@
 package com.example.crm.security
 
 import com.example.crm.security.jwt.JwtAuthenticationFilter
+import com.example.crm.security.permission.CustomPermissionEvaluator
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler
 import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -14,9 +18,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
     private val authenticationProvider: AuthenticationProvider) {
-
+    fun createExpressionHandler(): MethodSecurityExpressionHandler {
+        val expressionHandler = DefaultMethodSecurityExpressionHandler()
+        expressionHandler.setPermissionEvaluator(CustomPermissionEvaluator())
+        return expressionHandler
+    }
     @Bean
     fun securityFilterChain(
         http: HttpSecurity,
@@ -27,14 +36,12 @@ class SecurityConfig(
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/api/auth", "api/refresh", "/error", "api/user/get", "api/permission/save")
+                    .requestMatchers("/api/user/**", "/api/**")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/user")
-                    .permitAll()
-                    //.requestMatchers("/api/user**")
-                    //.hasRole("ADMIN")
-                  //  .anyRequest()
-                    //.fullyAuthenticated()
+                    //.requestMatchers(HttpMethod.POST, "/api/user")
+                    //.permitAll()
+                   // .requestMatchers("/api/user**")
+                 //   .fullyAuthenticated()
             }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

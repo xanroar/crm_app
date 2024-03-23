@@ -1,8 +1,8 @@
 package com.example.crm
 
-import com.example.crm.entities.user.UserRepository
-import com.example.crm.security.jwt.JwtProperties
-import com.example.crm.security.CustomUserDetailsService
+import com.example.crm.repository.UserRepository
+import com.example.crm.model.JwtProperties
+import com.example.crm.security.MyUserDetailsService
 import org.modelmapper.ModelMapper
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -21,7 +21,7 @@ class AppConfiguration {
     fun modelMapper(): ModelMapper = ModelMapper()
     @Bean
     fun userDetailsService(userRepository: UserRepository): UserDetailsService =
-        CustomUserDetailsService(userRepository)
+        MyUserDetailsService(userRepository)
 
     @Bean
     fun authenticationProvider(userRepository: UserRepository): AuthenticationProvider =

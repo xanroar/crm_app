@@ -1,15 +1,10 @@
 package com.example.crm.service
 
-import com.example.crm.entities.user.User
-import com.example.crm.entities.user.UserDTO
 import org.springframework.stereotype.Service
 import org.modelmapper.ModelMapper
 
 @Service
 class MapperService(private val modelMapper: ModelMapper) {
-
-
-
     fun <T, U> convertEntityToDto(entity: T, dtoClass: Class<U>): U {
         return try {
             modelMapper.map(entity, dtoClass)
