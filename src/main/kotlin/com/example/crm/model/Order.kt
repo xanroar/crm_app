@@ -22,6 +22,9 @@ data class Order(
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    var user: User
-)
+    var user: User,
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    var status: OrderStatus? = null
+)

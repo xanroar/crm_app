@@ -9,7 +9,6 @@ import java.util.*
 
 @Service
 class PermissionService(private val permissionRepository: PermissionRepository) {
-
     fun getAllPermission(pageable: Pageable): Page<Permission?> {
         return permissionRepository.findAll(pageable)
     }
@@ -24,14 +23,4 @@ class PermissionService(private val permissionRepository: PermissionRepository) 
         }
         permissionRepository.deleteById(id)
     }
-
-    fun getPermissionById(id: UUID): Permission {
-        val permission = permissionRepository.findById(id)
-            .orElseThrow {
-                NoSuchElementException("Order with id $id not found")
-            }
-        return permission
-    }
-
-
 }

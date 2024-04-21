@@ -9,18 +9,13 @@ data class User(
     @Id
     var id: UUID = UUID.randomUUID(),
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     var email: String? = null,
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     var password: String? = null,
 
-
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    var role: Role? = null,
-
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_to_permission",
         joinColumns = [JoinColumn(name = "user_id")],
@@ -28,6 +23,8 @@ data class User(
     )
     var permissions: Set<Permission>? = null
 )
+
+
 
 
 

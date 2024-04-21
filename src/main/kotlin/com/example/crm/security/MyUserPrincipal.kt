@@ -12,16 +12,14 @@ class MyUserPrincipal(private val user: User): UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val authorities = mutableSetOf<GrantedAuthority>()
 
-        user.role?.permissions?.mapTo(authorities) { permission ->
-            SimpleGrantedAuthority(permission.name)
-        }
-
         user.permissions?.mapTo(authorities) { permission ->
-            SimpleGrantedAuthority(permission.name)
+            val authority = SimpleGrantedAuthority(permission.name)
+            authority
         }
 
         return authorities
     }
+
 
     override fun getPassword(): String? = user.password
 

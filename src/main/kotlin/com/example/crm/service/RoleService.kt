@@ -15,12 +15,8 @@ class RoleService(
     private val roleRepository: RoleRepository,
     private val permissionRepository: PermissionRepository
 ) {
-
     fun getAllRole(pageable: Pageable): Page<Role?> {
-
-        val rolesPage  = roleRepository.findAll(pageable)
-
-        return rolesPage
+        return roleRepository.findAll(pageable)
     }
     fun saveRole(role: Role): Role {
         return roleRepository.save(createRole(role))
@@ -42,14 +38,4 @@ class RoleService(
         }
         roleRepository.deleteById(id)
     }
-
-    fun getRoleById(id: UUID): Role {
-        val permission = roleRepository.findById(id)
-            .orElseThrow {
-                NoSuchElementException("Order with id $id not found")
-            }
-        return permission
-    }
-
-
 }

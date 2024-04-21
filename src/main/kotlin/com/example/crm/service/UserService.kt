@@ -3,7 +3,6 @@ package com.example.crm.service
 import com.example.crm.dto.UserDTO
 import com.example.crm.model.Permission
 import com.example.crm.repository.PermissionRepository
-import com.example.crm.model.Role
 import com.example.crm.model.User
 import com.example.crm.repository.RoleRepository
 import com.example.crm.repository.UserRepository
@@ -20,14 +19,12 @@ class UserService(
     private val roleRepository: RoleRepository,
     private val permissionRepository: PermissionRepository,
 ) {
-
     fun getAllUser(pageable: Pageable): Page<UserDTO> {
         val users = userRepository.findAll(pageable)
         return users.map { mapperService.convertEntityToDto(it, UserDTO::class.java) }
     }
 
     fun saveUser(userDTO: UserDTO): UserDTO {
-
         if(doesUserExistInDatabase(userDTO.email))
             throw IllegalArgumentException("User with email ${userDTO.email} already exists.")
 
@@ -44,19 +41,26 @@ class UserService(
         user.id = userDTO.id ?: UUID.randomUUID()
         user.email = userDTO.email
         user.password = encodePassword(userDTO.password)
-        user.role = findRole(userDTO.role?.name)
-        user.permissions = findPermissions(userDTO.permissions)
+        user.permissions = findPermissions(userDTO)
+
         return user
     }
     private fun encodePassword(password: String?): String {
         return BCryptPasswordEncoder().encode(password)
     }
-    private fun findRole(roleName: String?): Role? {
-        return roleRepository.findByName(roleName)?.orElse(null)
-    }
-    private fun findPermissions(permissionNames: Set<Permission>?): Set<Permission> {
-        val permissionNamesAsString = permissionNames?.map { it.name }?.toSet()
-        return permissionRepository.findByNameIn(permissionNamesAsString).filterNotNull().toSet()
+
+    private fun findPermissions(userDTO: UserDTO): Set<Permission> {
+        val roles = userDTO.role?.map { it.name } ?.toSet()
+        val permissions = userDTO.permissions?.map { it.name } ?: emptySet()
+
+        val permissionsFromRoles = roleRepository.findByNameIn(roles)
+            .flatMap { it?.permissions.orEmpty() }
+            .map { it.name }
+            .toSet()
+
+        val allPermissionNames = permissionsFromRoles + permissions
+
+        return permissionRepository.findByNameIn(allPermissionNames).filterNotNull().toSet()
     }
 
     fun deleteUser(id: UUID){
@@ -66,11 +70,15 @@ class UserService(
         userRepository.deleteById(id)
     }
 
-    fun getUserById(id: UUID): UserDTO {
-        val user = userRepository.findById(id)
+    fun findUserById(id: UUID): User {
+        return userRepository.findById(id)
             .orElseThrow {
                 NoSuchElementException("User with id $id not found")
-            }
+            }!!
+    }
+
+    fun getUserById(id: UUID): UserDTO {
+        val user = findUserById(id)
         return mapperService.convertEntityToDto(user, UserDTO::class.java)
     }
     fun updateUser(id: UUID, userDTO: UserDTO): UserDTO {

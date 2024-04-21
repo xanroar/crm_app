@@ -2,6 +2,7 @@ package com.example.crm.service
 
 import com.example.crm.dto.*
 import com.example.crm.model.RefreshToken
+import com.example.crm.repository.UserRepository
 import com.example.crm.security.MyUserPrincipal
 import com.example.crm.security.MyUserDetailsService
 import com.example.crm.security.jwt.JwtTokenService
@@ -10,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class AuthService(
@@ -19,6 +19,7 @@ class AuthService(
     private val tokenService: JwtTokenService,
     private val refreshTokenService: RefreshTokenService,
     private val userService: UserService,
+    private val userRepository: UserRepository,
 ) {
     fun authentication(authenticationRequest: AuthRequest): AuthResponse {
         val user = authenticateUser(authenticationRequest)
@@ -50,15 +51,24 @@ class AuthService(
         refreshTokenService.save(token)
         return AuthResponse(accessToken = accessToken, refreshToken = refreshToken)
     }
-    fun deleteRefreshTokenByUserId(userId: UUID) {
-        refreshTokenService.deleteByUserId(userId)
-    }
+    fun deleteRefreshTokenByUserId(token: String) {
+        val email = tokenService.extractEmail(
+            extractAccessToken(token))
 
+        userRepository.findByEmail(email)?.ifPresent { user ->
+            user.let { refreshTokenService.deleteByUserId(it.id) }
+        }
+    }
     fun registerUser(user: UserDTO): UserDTO{
         return userService.saveUser(user)
     }
+    fun refreshAccessToken(refreshToken: String): RefreshResponse {
+        val request = RefreshRequest(
+            extractAccessToken(refreshToken))
 
-    fun refreshAccessToken(refreshToken: RefreshRequest): RefreshResponse {
-        return refreshTokenService.processRefreshToken(refreshToken)
+        return refreshTokenService.processRefreshToken(request)
+    }
+    private fun extractAccessToken(token: String): String {
+        return token.removePrefix("Bearer ").trim()
     }
 }

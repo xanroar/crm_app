@@ -1,10 +1,10 @@
 package com.example.crm.dto
 
+import com.example.crm.model.OrderStatus
 import java.util.*
 
 data class OrderDTO(
-    var id: UUID? = null,
     var orderNumber: String? = null,
     var totalPrice: Double? = null,
-    var userId: UUID? = null,
+    var status: OrderStatus? = null
 )

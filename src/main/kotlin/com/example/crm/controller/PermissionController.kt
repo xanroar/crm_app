@@ -13,20 +13,15 @@ import java.util.*
 class PermissionController(
     private val permissionService: PermissionService
 ) {
-    @GetMapping("/get")
+    @GetMapping("/v1/get")
     fun getAllPermission(@PageableDefault(size = 5) pageable: Pageable): Page<Permission?> =
         permissionService.getAllPermission(pageable)
 
-    @PostMapping("/save")
+    @PostMapping("/v1/save")
     fun savePermission(@RequestBody permission: Permission): Permission =
         permissionService.savePermission(permission)
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/v1/delete/{id}")
     fun deletePermission(@PathVariable id: UUID) =
         permissionService.deletePermission(id)
-
-    @GetMapping("/get/{id}")
-    fun getPermissionById(@PathVariable id: UUID): Permission =
-        permissionService.getPermissionById(id)
-
 }

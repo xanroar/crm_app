@@ -1,35 +1,29 @@
 package com.example.crm.controller
 
 import com.example.crm.dto.*
-import com.example.crm.model.User
 import com.example.crm.service.AuthService
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api")
 class AuthController(
     private val authenticationService: AuthService
 ) {
-    @PostMapping("/auth")
+    @PostMapping("/v1/auth")
     fun authenticate(@RequestBody authRequest: AuthRequest): AuthResponse =
         authenticationService.authentication(authRequest)
 
-    @PostMapping("/register")
+    @PostMapping("/v1/register")
     fun registerUser(@RequestBody userDTO: UserDTO): UserDTO =
         authenticationService.registerUser(userDTO)
 
-    @PostMapping("/logout")
-    fun logoutUser(@RequestBody userid: Map<String, UUID>) =
-        userid["id"]?.let { authenticationService.deleteRefreshTokenByUserId(it) }
+    @PostMapping("/v1/logout")
+    fun logoutUser(@RequestHeader(value="Authorization")user: String) =
+        authenticationService.deleteRefreshTokenByUserId(user)
 
-    @PostMapping("/refresh")
-    fun refreshAccessToken(@RequestBody request: RefreshRequest): RefreshResponse? =
-        authenticationService.refreshAccessToken(request)
+    @PostMapping("/v1/refresh")
+    fun refreshAccessToken(@RequestHeader(value="Authorization")refreshToken: String): RefreshResponse? =
+        authenticationService.refreshAccessToken(refreshToken)
 
 }
 

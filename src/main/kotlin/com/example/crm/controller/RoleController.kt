@@ -14,20 +14,16 @@ import java.util.*
 class RoleController(
     private val roleService: RoleService
 ) {
-    @GetMapping("/get")
+    @GetMapping("/v1/get")
     fun getAllRole(@PageableDefault(size = 5) pageable: Pageable): Page<Role?> =
         roleService.getAllRole(pageable)
 
-    @PostMapping("/save")
+    @PostMapping("/v1/save")
     fun saveRole(@RequestBody role: Role): Role =
         roleService.saveRole(role)
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/v1/delete/{id}")
     fun deleteRole(@PathVariable id: UUID) =
         roleService.deleteRole(id)
-
-    @GetMapping("/get/{id}")
-    fun getRoleById(@PathVariable id: UUID): Role =
-        roleService.getRoleById(id)
 
 }

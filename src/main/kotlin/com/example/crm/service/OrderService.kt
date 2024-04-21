@@ -1,27 +1,45 @@
 package com.example.crm.service
 
+import com.example.crm.component.OrderFilter
 import com.example.crm.dto.OrderDTO
 import com.example.crm.model.Order
 import com.example.crm.repository.OrderRepository
+import com.example.crm.security.MyUserPrincipal
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import com.example.crm.model.OrderStatus
 import org.springframework.stereotype.Service
 import java.util.*
 
-
 @Service
-class OrderService(private val orderRepository: OrderRepository,
-                   private val mapperService: MapperService,) {
+class OrderService(
+    private val orderRepository: OrderRepository,
+    private val mapperService: MapperService,
+    private val userService: UserService,
+    private val orderFilter: OrderFilter,) {
 
     fun getAllOrders(pageable: Pageable): Page<OrderDTO> {
-
         val orders = orderRepository.findAll(pageable)
-
+        return orders.map { mapperService.convertEntityToDto(it, OrderDTO::class.java) }
+    }
+    fun getUserOrders( user: MyUserPrincipal): List<OrderDTO> {
+        val orders = orderRepository.findAllByUserId(user.getId())
+        return orders.map { mapperService.convertEntityToDto(it, OrderDTO::class.java) }
+    }
+    fun getUserOrdersByStatus(user: MyUserPrincipal, status: OrderStatus): List<OrderDTO> {
+        val orders = orderRepository.findAllByUserIdAndStatus(user.getId(), status)
         return orders.map { mapperService.convertEntityToDto(it, OrderDTO::class.java) }
     }
 
-    fun saveOrder(orderDTO: OrderDTO): OrderDTO {
-        val order = mapperService.convertDtoToEntity(orderDTO, Order::class.java )
+    fun saveOrder(orderDTO: OrderDTO, user: MyUserPrincipal): OrderDTO {
+        val filteredOrderNumber = orderFilter.filterOrderNumber(orderDTO.orderNumber)
+
+        val order = Order(
+            orderNumber = filteredOrderNumber,
+            totalPrice = orderDTO.totalPrice,
+            status = orderDTO.status,
+            user = userService.findUserById(user.getId())
+        )
 
         val savedOrder = orderRepository.save(order)
 
