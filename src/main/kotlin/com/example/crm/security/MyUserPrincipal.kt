@@ -1,6 +1,6 @@
 package com.example.crm.security
 
-import com.example.crm.model.User
+import com.example.crm.domain.user.model.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails

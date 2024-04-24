@@ -1,6 +1,6 @@
 package com.example.crm.security
 
-import com.example.crm.security.jwt.JwtAuthenticationFilter
+import com.example.crm.domain.authentication.jwt.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider

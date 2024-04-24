@@ -1,7 +1,7 @@
 package com.example.crm
 
-import com.example.crm.repository.UserRepository
-import com.example.crm.model.JwtProperties
+import com.example.crm.domain.user.UserRepository
+import com.example.crm.domain.authentication.jwt.JwtProperties
 import com.example.crm.security.MyUserDetailsService
 import org.modelmapper.ModelMapper
 import org.springframework.boot.context.properties.EnableConfigurationProperties

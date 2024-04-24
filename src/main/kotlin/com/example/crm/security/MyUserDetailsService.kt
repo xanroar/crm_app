@@ -1,6 +1,6 @@
 package com.example.crm.security
 
-import com.example.crm.repository.UserRepository
+import com.example.crm.domain.user.UserRepository
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException

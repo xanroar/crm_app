@@ -5,8 +5,7 @@ spring:
     password: admin
   jpa:
     hibernate:
-    ddl-auto: update
-
+      ddl-auto: update
   cache:
     type: simple
   sql:
