@@ -7,25 +7,25 @@ import com.example.crm.domain.user.model.UserDTO
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v1/auth")
 class AuthController(
     private val authenticationService: AuthService
 ) {
-    @PostMapping("/v1/auth")
+    @PostMapping("/login")
     fun authenticate(@RequestBody authRequest: TokenRequest): TokenResponse =
         authenticationService.authentication(authRequest)
 
-    @PostMapping("/v1/register")
+    @PostMapping("/register")
     fun registerUser(@RequestBody userDTO: UserDTO): UserDTO =
         authenticationService.registerUser(userDTO)
 
-    @PostMapping("/v1/logout")
+    @PostMapping("/logout")
     fun logoutUser(@RequestHeader(value="Authorization")user: String) =
         authenticationService.deleteRefreshTokenByUserId(user)
 
-    @PostMapping("/v1/refresh")
+    @PostMapping("/refresh")
     fun refreshAccessToken(@RequestHeader(value="Authorization")refreshToken: String): RefreshResponse? =
         authenticationService.refreshAccessToken(refreshToken)
-
 }
+
 
