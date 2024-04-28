@@ -3,7 +3,7 @@ package com.example.crm.domain.order
 import com.example.crm.annotation.CurrentUser
 import com.example.crm.domain.order.model.OrderDTO
 import com.example.crm.domain.order.model.OrderStatus
-import com.example.crm.security.MyUserPrincipal
+import com.example.crm.security.CustomUserDetails
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -21,12 +21,12 @@ class OrderController(
 
     @GetMapping("/user")
     fun getUserOrders(
-        @CurrentUser user: MyUserPrincipal
+        @CurrentUser user: CustomUserDetails
     ): List<OrderDTO> = orderService.getUserOrders(user)
 
     @GetMapping("/user/status")
     fun getUserOrdersByStatus(
-        @CurrentUser user: MyUserPrincipal,
+        @CurrentUser user: CustomUserDetails,
         @RequestParam("status") status: OrderStatus
     ): List<OrderDTO> = orderService.getUserOrdersByStatus(user, status)
 
@@ -37,14 +37,14 @@ class OrderController(
     @PostMapping
     fun saveOrder(
         @RequestBody orderDTO: OrderDTO,
-        @CurrentUser user: MyUserPrincipal
+        @CurrentUser user: CustomUserDetails
     ): OrderDTO = orderService.saveOrder(orderDTO, user)
 
     @DeleteMapping("/{id}")
     fun deleteOrder(@PathVariable id: UUID) =
         orderService.deleteOrder(id)
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     fun updateOrder(@PathVariable id: UUID, @RequestBody orderDTO: OrderDTO) =
         orderService.updateOrder(id, orderDTO)
 }

@@ -2,12 +2,12 @@ package com.example.crm.domain.user.model
 
 import com.example.crm.domain.permission.Permission
 import com.example.crm.domain.role.Role
-import java.util.*
 
 data class UserDTO(
-    var id: UUID? = null,
-    var email: String? = null,
-    var password: String? = null,
-    var role: Set<Role>? = null,
-    var permissions: Set<Permission>? = null
-)
+    var email: String,
+    var password: String,
+    var role: Set<Role> = setOf(),
+    var permissions: Set<Permission> = setOf(),
+){
+    constructor(email: String, password: String, permissions: Set<Permission>) : this(email, password, setOf(), permissions)
+}

@@ -2,19 +2,17 @@ package com.example.crm.domain.user.model
 
 import com.example.crm.domain.permission.Permission
 import jakarta.persistence.*
+import java.time.LocalDateTime
 import java.util.*
 
 @Entity
 @Table(name = "users")
 data class User(
-    @Id
-    var id: UUID = UUID.randomUUID(),
-
     @Column(name = "email", unique = true, nullable = false)
-    var email: String? = null,
+    var email: String,
 
     @Column(name = "password", nullable = false)
-    var password: String? = null,
+    var password: String,
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -22,8 +20,19 @@ data class User(
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "permission_id")]
     )
-    var permissions: Set<Permission>? = null
-)
+    var permissions: Set<Permission> = setOf()
+){
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @Column(name = "id", updatable = false, nullable = false)
+    var id: UUID = UUID.randomUUID()
+
+    @Column(name = "created_at")
+    var createdAt: LocalDateTime? = null
+
+    @Column(name = "updated_at")
+    var updatedAt: LocalDateTime? = null
+}
 
 
 

@@ -6,24 +6,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.util.UUID
 
-class MyUserPrincipal(private val user: User): UserDetails {
+class CustomUserDetails(private val user: User): UserDetails {
     fun getId(): UUID = user.id
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        val authorities = mutableSetOf<GrantedAuthority>()
-
-        user.permissions?.mapTo(authorities) { permission ->
-            val authority = SimpleGrantedAuthority(permission.name)
-            authority
+        return user.permissions.mapTo(mutableSetOf()) { permission ->
+            SimpleGrantedAuthority(permission.name)
         }
-
-        return authorities
     }
 
+    override fun getPassword(): String = user.password
 
-    override fun getPassword(): String? = user.password
-
-    override fun getUsername(): String? = user.email
+    override fun getUsername(): String = user.email
 
     override fun isAccountNonExpired(): Boolean = true
 

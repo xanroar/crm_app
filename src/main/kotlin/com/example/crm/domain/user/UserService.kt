@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -30,28 +31,36 @@ class UserService(
 
         val user = createUserFromDto(userDTO)
 
-        val savedUser = userRepository.save(user)
-        return mapperService.convertEntityToDto(savedUser, UserDTO::class.java)
+        userRepository.save(user)
+
+        return convertEntityToDto(user)
     }
     fun doesUserExistInDatabase(email: String?): Boolean {
         return userRepository.findByEmail(email)?.isPresent ?: false
     }
+    private fun convertEntityToDto(user: User): UserDTO {
+        return UserDTO(
+            email = user.email,
+            password = user.password,
+            permissions = user.permissions
+        )
+    }
     private fun createUserFromDto(userDTO: UserDTO): User {
-        val user = User()
-        user.id = userDTO.id ?: UUID.randomUUID()
-        user.email = userDTO.email
-        user.password = encodePassword(userDTO.password)
-        user.permissions = findPermissions(userDTO)
-
-        return user
+        return User(
+            email = userDTO.email,
+            password = encodePassword(userDTO.password),
+            permissions = findPermissions(userDTO)
+        ).apply {
+            createdAt = LocalDateTime.now()
+        }
     }
     private fun encodePassword(password: String?): String {
         return BCryptPasswordEncoder().encode(password)
     }
 
     private fun findPermissions(userDTO: UserDTO): Set<Permission> {
-        val roles = userDTO.role?.map { it.name } ?.toSet()
-        val permissions = userDTO.permissions?.map { it.name } ?: emptySet()
+        val roles = userDTO.role.map { it.name } .toSet()
+        val permissions = userDTO.permissions.map { it.name }
 
         val permissionsFromRoles = roleRepository.findByNameIn(roles)
             .flatMap { it?.permissions.orEmpty() }
@@ -82,16 +91,19 @@ class UserService(
         return mapperService.convertEntityToDto(user, UserDTO::class.java)
     }
     fun updateUser(id: UUID, userDTO: UserDTO): UserDTO {
-        val existingCustomer = userRepository.findById(id)
+        val existingUser = userRepository.findById(id)
             .orElseThrow { NoSuchElementException("User with id $id not found") }
 
-        val updatedUser = mapperService.convertDtoToEntity(userDTO, User::class.java)
+        val updatedUser = existingUser?.apply {
+            email = userDTO.email
+            password = encodePassword(userDTO.password)
+            permissions = findPermissions(userDTO)
+            updatedAt = LocalDateTime.now()
+        }
 
-        if (existingCustomer != null)
-            updatedUser.id = existingCustomer.id
+        val savedUser = userRepository.save(updatedUser!!)
 
-        val savedCustomer = userRepository.save(updatedUser)
-
-        return mapperService.convertEntityToDto(savedCustomer, UserDTO::class.java)
+        return convertEntityToDto(savedUser)
     }
+
 }

@@ -8,8 +8,8 @@ import com.example.crm.domain.user.model.UserDTO
 import com.example.crm.domain.authentication.jwt.token.refresh.RefreshToken
 import com.example.crm.domain.user.UserRepository
 import com.example.crm.domain.user.UserService
-import com.example.crm.security.MyUserPrincipal
-import com.example.crm.security.MyUserDetailsService
+import com.example.crm.security.CustomUserDetails
+import com.example.crm.security.CustomUserDetailsService
 import com.example.crm.domain.authentication.jwt.JwtTokenService
 import com.example.crm.domain.authentication.jwt.token.refresh.RefreshTokenService
 import org.springframework.security.authentication.AuthenticationManager
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service
 @Service
 class AuthService(
     private val authManager: AuthenticationManager,
-    private val userDetailsService: MyUserDetailsService,
+    private val userDetailsService: CustomUserDetailsService,
     private val tokenService: JwtTokenService,
     private val refreshTokenService: RefreshTokenService,
     private val userService: UserService,
@@ -30,7 +30,7 @@ class AuthService(
         val user = authenticateUser(authenticationRequest)
         return generateTokens(user)
     }
-    private fun authenticateUser(authenticationRequest: TokenRequest): MyUserPrincipal {
+    private fun authenticateUser(authenticationRequest: TokenRequest): CustomUserDetails {
         authenticateCredentials(authenticationRequest)
         return loadUserDetails(authenticationRequest.email)
     }
@@ -42,10 +42,10 @@ class AuthService(
             throw BadCredentialsException("Incorrect username or password")
         }
     }
-    private fun loadUserDetails(email: String): MyUserPrincipal {
+    private fun loadUserDetails(email: String): CustomUserDetails {
         return userDetailsService.loadUserByUsername(email)
     }
-    private fun generateTokens(user: MyUserPrincipal): TokenResponse {
+    private fun generateTokens(user: CustomUserDetails): TokenResponse {
         val accessToken = tokenService.createAccessToken(user)
         val refreshToken = tokenService.createRefreshToken(user)
         val token = RefreshToken(

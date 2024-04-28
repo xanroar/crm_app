@@ -7,14 +7,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
-class MyUserDetailsService(
+class CustomUserDetailsService(
     private val userRepository: UserRepository
 ) : UserDetailsService {
     @Cacheable(value = ["users"], key = "#username")
-    override fun loadUserByUsername(username: String): MyUserPrincipal =
+    override fun loadUserByUsername(username: String): CustomUserDetails =
         userRepository.findByEmail(username)
             ?.orElseThrow { UsernameNotFoundException("Not found!") }
-            ?.let { MyUserPrincipal(it) }
+            ?.let { CustomUserDetails(it) }
             ?: throw UsernameNotFoundException("Not found!")
 
 }

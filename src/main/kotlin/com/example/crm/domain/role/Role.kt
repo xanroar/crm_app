@@ -7,9 +7,6 @@ import java.util.*
 @Entity
 @Table(name = "roles")
 data class Role(
-    @Id
-    var id: UUID = UUID.randomUUID(),
-
     @Column(nullable = false)
     var name: String = "",
 
@@ -20,4 +17,9 @@ data class Role(
         inverseJoinColumns = [JoinColumn(name = "permission_id")]
     )
     var permissions: Set<Permission> = HashSet()
-)
+){
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @Column(name = "id", updatable = false, nullable = false)
+    var id: UUID = UUID.randomUUID()
+}

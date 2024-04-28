@@ -1,6 +1,6 @@
 package com.example.crm.domain.authentication.jwt
 
-import com.example.crm.security.MyUserDetailsService
+import com.example.crm.security.CustomUserDetailsService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -13,7 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class JwtAuthenticationFilter(
-    private val userDetailsService: MyUserDetailsService,
+    private val userDetailsService: CustomUserDetailsService,
     private val tokenService: JwtTokenService,
 ) : OncePerRequestFilter() {
 

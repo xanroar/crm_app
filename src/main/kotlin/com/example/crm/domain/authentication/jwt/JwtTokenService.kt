@@ -1,6 +1,6 @@
 package com.example.crm.domain.authentication.jwt
 
-import com.example.crm.security.MyUserPrincipal
+import com.example.crm.security.CustomUserDetails
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
@@ -32,11 +32,11 @@ class JwtTokenService(
             .signWith(secretKey)
             .compact()
 
-    fun createAccessToken(user: MyUserPrincipal) = generate(
+    fun createAccessToken(user: CustomUserDetails) = generate(
         userDetails = user,
         expirationDate = getAccessTokenExpiration()
     )
-    fun createRefreshToken(user: MyUserPrincipal) = generate(
+    fun createRefreshToken(user: CustomUserDetails) = generate(
         userDetails = user,
         expirationDate = getRefreshTokenExpiration()
     )

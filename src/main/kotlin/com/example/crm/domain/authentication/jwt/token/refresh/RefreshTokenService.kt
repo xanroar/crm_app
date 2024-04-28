@@ -1,7 +1,7 @@
 package com.example.crm.domain.authentication.jwt.token.refresh
 
 import com.example.crm.domain.authentication.jwt.JwtTokenService
-import com.example.crm.security.MyUserDetailsService
+import com.example.crm.security.CustomUserDetailsService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -10,7 +10,7 @@ import java.util.*
 @Service
 class RefreshTokenService (
     private val tokenService: JwtTokenService,
-    private val userDetailsService: MyUserDetailsService,
+    private val userDetailsService: CustomUserDetailsService,
     private val refreshTokenRepository: RefreshTokenRepository,
     ){
     fun findByRefreshToken(token: String?): RefreshToken {
